@@ -20,11 +20,7 @@ If you have any questions, feel free to contact me by wuxm65@mail2.sysu.edu.cn.
 
 ### Dependencies Installation
 
-The installation process is a little complex, please follow the order to ensure success. Some common issues are also shown below. We also write a 
-
-[file]: common_issues.md
-
-to describe some common issues of the installation.
+The installation process is a little complex, please follow the order to ensure successful installation. We also write a [file](common_issues.md) to describe some common issues of the installation.
 
 #### MinkowskiEngine
 
