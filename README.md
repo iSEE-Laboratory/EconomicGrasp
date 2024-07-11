@@ -6,6 +6,8 @@ Official implement of EconomicGrasp | [Paper]() | [Personal Homepage](https://dr
 
 Accepted at ECCV 2024!
 
+Super fast to converge, use it and you will like it!
+
 If you have any questions, feel free to contact me by wuxm65@mail2.sysu.edu.cn.
 
 ## Abstract
