@@ -16,7 +16,7 @@ If you have any questions, feel free to contact me by wuxm65@mail2.sysu.edu.cn.
 
 ## Overall
 
-![model_framework](imgs/framework.png)
+<img src="imgs/framework.png" alt="model_framework" style="zoom:50%;" />
 
 ## How to Run
 
