@@ -1,6 +1,6 @@
 # An Economic Framework for 6-DoF Grasp Detection
 
-Official implement of EconomicGrasp | [Paper]() | [Personal Homepage](https://dravenalg.github.io/).
+Official implement of EconomicGrasp | [Paper](https://arxiv.org/abs/2407.08366) | [Personal Homepage](https://dravenalg.github.io/).
 
 **Xiao-Ming Wu&**, Jia-Feng Cai&, Jian-Jian Jiang, Dian Zheng, Yi-Lin Wei, Wei-Shi Zheng*
 
