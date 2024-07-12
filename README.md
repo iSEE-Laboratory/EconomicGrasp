@@ -10,7 +10,7 @@ Super fast to converge, use it and you will like it!
 
 If you have any questions, feel free to contact me by wuxm65@mail2.sysu.edu.cn.
 
-**Codes are not fully ready. Maybe it can not run successfully. I need to have a double check for them.**
+**Codes are not fully ready. Maybe it will not run successfully. I need to have a double check for them.**
 
 ## Abstract
 
