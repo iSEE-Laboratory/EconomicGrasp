@@ -15,15 +15,16 @@ def get_loss(end_points):
     # grasp match loss
     angle_loss, end_points = compute_angle_loss(end_points)
     depth_loss, end_points = compute_depth_loss(end_points)
-    score_loss, end_points = compute_score_loss_cls(end_points)
+    score_loss, end_points = compute_score_loss_cls(end_points)  # use classification to learn score
     width_loss, end_points = compute_width_loss(end_points)
 
     loss = cfgs.objectness_loss_weight * objectness_loss + \
            cfgs.graspness_loss_weight * graspness_loss + \
            cfgs.view_loss_weight * view_loss + \
+           cfgs.angle_loss_weight * angle_loss + \
+           cfgs.depth_loss_weight * depth_loss + \
            cfgs.score_loss_weight * score_loss + \
-           cfgs.width_loss_weight * width_loss + \
-           depth_loss + angle_loss
+           cfgs.width_loss_weight * width_loss
 
     end_points['A: Overall Loss'] = loss
 
@@ -122,4 +123,3 @@ def compute_width_loss(end_points):
         loss = loss[valid_mask].mean()
     end_points['B: Width Loss'] = loss
     return loss, end_points
-

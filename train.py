@@ -15,8 +15,9 @@ from utils.arguments import cfgs
 # Local Libraries
 from models.economicgrasp import economicgrasp
 from models.loss_economicgrasp import get_loss as get_loss_economicgrasp
+from dataset.graspnet_dataset import GraspNetDataset, collate_fn
 
-# ----------- GLOBAL CONFIG BEGIN  ------------
+# ----------- GLOBAL CONFIG ------------
 
 # Epoch
 EPOCH_CNT = 0
@@ -85,8 +86,6 @@ def adjust_learning_rate(optimizer, epoch):
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-
-# ------GLOBAL CONFIG END  ------------
 
 # ------TRAINING BEGIN  ------------
 def train_one_epoch():

@@ -210,8 +210,8 @@ class GraspNetDataset(Dataset):
         view_graspness_list = []
         top_view_index_list = []
 
+        # load labels
         grasp_labels = np.load(self.grasp_labels[scene])
-        # grasp_labels = self.grasp_labels[scene]
 
         points = grasp_labels['points']
         rotations = grasp_labels['rotations'].astype(np.int32)
@@ -235,13 +235,18 @@ class GraspNetDataset(Dataset):
             cloud_sampled, object_poses_list = self.augment_data(cloud_sampled, object_poses_list)
 
         ret_dict = {}
-        ret_dict['point_clouds'] = cloud_sampled.astype(np.float32)  # [scene_points, 3 (coords)]
-        ret_dict['cloud_colors'] = color_sampled.astype(np.float32)  # [scene_points, 3 (rgb)]
-        ret_dict['coordinates_for_voxel'] = cloud_sampled.astype(
-            np.float32) / self.voxel_size  # [scene_points, 3 (coords)]
-        ret_dict['graspness_label'] = graspness_sampled.astype(np.float32)  # [scene_points, 1 (graspness)]
-        ret_dict['objectness_label'] = objectness_label.astype(np.int64)  # [scene_points, 1 (objectness)]
-        ret_dict['segmentation_label'] = segmentation_label.astype(np.int64)  # [scene_points, 1 (objectness)]
+        ret_dict['point_clouds'] = cloud_sampled.astype(np.float32)
+        # [scene_points, 3 (coords)]
+        ret_dict['cloud_colors'] = color_sampled.astype(np.float32)
+        # [scene_points, 3 (rgb)]
+        ret_dict['coordinates_for_voxel'] = cloud_sampled.astype(np.float32) / self.voxel_size
+        # [scene_points, 3 (coords)]
+        ret_dict['graspness_label'] = graspness_sampled.astype(np.float32)
+        # [scene_points, 1 (graspness)]
+        ret_dict['objectness_label'] = objectness_label.astype(np.int64)
+        # [scene_points, 1 (objectness)]
+        ret_dict['segmentation_label'] = segmentation_label.astype(np.int64)
+        # [scene_points, 1 (objectness)]
         ret_dict['object_poses_list'] = object_poses_list
         # list has a length of objects amount, each has size [3, 4] (pose matrix)
         ret_dict['grasp_points_list'] = grasp_points_list

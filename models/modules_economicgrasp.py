@@ -24,7 +24,7 @@ class GraspableNet(nn.Module):
         return end_points
 
 
-class ApproachNet(nn.Module):
+class RotationNet(nn.Module):
     def __init__(self, num_view, seed_feature_dim, is_training=True):
         super().__init__()
         self.num_view = num_view
@@ -71,8 +71,7 @@ class ApproachNet(nn.Module):
         return end_points, res_features
 
 
-
-class CloudCrop_Attention(nn.Module):
+class Cylinder_Grouping_Local_Interaction(nn.Module):
     def __init__(self, nsample, seed_feature_dim, cylinder_radius=0.05, hmin=-0.02, hmax=0.04):
         super().__init__()
         self.nsample = nsample
@@ -83,7 +82,8 @@ class CloudCrop_Attention(nn.Module):
 
         self.grouper = CylinderQueryAndGroup(radius=cylinder_radius, hmin=hmin, hmax=hmax, nsample=nsample, use_xyz=True, normalize_xyz=True)
         self.mlps = pt_utils.SharedMLP(mlps, bn=True)
-        self.attention_module = AttentionModule(dim=3 + 256, n_head=1, msa_dropout=0.05)
+        # local interaction module
+        self.local_interaction_module = AttentionModule(dim=3 + 256, n_head=1, msa_dropout=0.05)
         self.mlps2 = pt_utils.SharedMLP(mlps2, bn=True)
 
     def forward(self, seed_xyz_graspable, seed_features_graspable, vp_rot):
@@ -91,7 +91,7 @@ class CloudCrop_Attention(nn.Module):
         grouped_feature = self.grouper(seed_xyz_graspable, seed_xyz_graspable, vp_rot, seed_features_graspable)
         new_features = self.mlps(grouped_feature)
         new_features = torch.cat([new_features, coords], dim=1).permute(0, 2, 3, 1).contiguous().view(-1, self.nsample, 256 + 3)
-        new_features = self.attention_module(new_features, new_features, new_features, mask=None)
+        new_features = self.local_interaction_module(new_features, new_features, new_features, mask=None)
         new_features = new_features.view(seed_xyz_graspable.shape[0], seed_xyz_graspable.shape[1], self.nsample, 3 + 256).permute(0, 3, 1, 2).contiguous()
         new_features = self.mlps2(new_features)
         new_features = F.max_pool2d(new_features, kernel_size=[1, new_features.size(3)])
@@ -99,8 +99,7 @@ class CloudCrop_Attention(nn.Module):
         return new_features
 
 
-
-class SWADNet_Interaction2_score_cls(nn.Module):
+class Grasp_Head_Globle_Interaction(nn.Module):
     def __init__(self, num_angle, num_depth):
         super().__init__()
         self.num_angle = num_angle
@@ -111,12 +110,13 @@ class SWADNet_Interaction2_score_cls(nn.Module):
         self.conv_width_feature = nn.Conv1d(256, 64, 1)
         self.conv_score_feature = nn.Conv1d(256, 64, 1)
 
-        self.interaction_module = AttentionModule(dim=64, n_head=1, msa_dropout=0.05)
+        # global interaction module
+        self.global_interaction_module = AttentionModule(dim=64, n_head=1, msa_dropout=0.05)
 
         self.conv_angle = nn.Conv1d(64, num_angle + 1, 1)
         self.conv_depth = nn.Conv1d(64, num_depth + 1, 1)
         self.conv_width = nn.Conv1d(64, 1, 1)
-        self.conv_score = nn.Conv1d(64, 6, 1)
+        self.conv_score = nn.Conv1d(64, 6, 1)  # use classification for score learning
 
     def forward(self, vp_features, end_points):
         B, _, num_seed = vp_features.size()
@@ -132,7 +132,7 @@ class SWADNet_Interaction2_score_cls(nn.Module):
         score_features = score_features.permute(0, 2, 1).contiguous().view(-1, 64).unsqueeze(1)
 
         interaction_feature = torch.cat([angle_features, depth_features, width_features, score_features], dim=1)
-        interaction_feature = self.interaction_module(interaction_feature, interaction_feature, interaction_feature, mask=None)
+        interaction_feature = self.global_interaction_module(interaction_feature, interaction_feature, interaction_feature, mask=None)
 
         angle_features = interaction_feature[:, 0, :].view(B, -1, 64).permute(0, 2, 1)
         depth_features = interaction_feature[:, 1, :].view(B, -1, 64).permute(0, 2, 1)

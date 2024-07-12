@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 import MinkowskiEngine as ME
 
-from models.backbone import MinkUNetBase
-from models.modules_economicgrasp import ApproachNet, GraspableNet, CloudCrop_Attention, SWADNet_Interaction2_score_cls
+from models.backbone import TDUnet
+from models.modules_economicgrasp import GraspableNet, RotationNet, Cylinder_Grouping_Local_Interaction, Grasp_Head_Globle_Interaction
 from utils.label_generation import process_grasp_labels
 from libs.pointnet2.pointnet2_utils import furthest_point_sample, gather_operation
 from utils.arguments import cfgs
@@ -22,19 +22,19 @@ class economicgrasp(nn.Module):
         self.voxel_size = voxel_size
 
         # Backbone
-        self.backbone = MinkUNetBase(in_channels=3, out_channels=self.seed_feature_dim, D=3)
+        self.backbone = TDUnet(in_channels=3, out_channels=self.seed_feature_dim, D=3)
 
         # Objectness and graspness
         self.graspable = GraspableNet(seed_feature_dim=self.seed_feature_dim)
 
         # View Selection
-        self.rotation = ApproachNet(self.num_view, seed_feature_dim=self.seed_feature_dim, is_training=self.is_training)
+        self.rotation = RotationNet(self.num_view, seed_feature_dim=self.seed_feature_dim, is_training=self.is_training)
 
         # Cylinder Grouping
-        self.crop = CloudCrop_Attention(nsample=16, cylinder_radius=cylinder_radius, seed_feature_dim=self.seed_feature_dim)
+        self.cy_group = Cylinder_Grouping_Local_Interaction(nsample=16, cylinder_radius=cylinder_radius, seed_feature_dim=self.seed_feature_dim)
 
         # Depth and Score searching
-        self.swad = SWADNet_Interaction2_score_cls(num_angle=self.num_angle, num_depth=self.num_depth)
+        self.grasp_head = Grasp_Head_Globle_Interaction(num_angle=self.num_angle, num_depth=self.num_depth)
 
     def forward(self, end_points):
         seed_xyz = end_points['point_clouds']  # use all sampled point cloud, [B, point_num (15000)， 3]
@@ -106,12 +106,12 @@ class economicgrasp(nn.Module):
             grasp_top_views_rot = end_points['grasp_top_view_rot']
 
         # Cylinder grouping
-        group_features = self.crop(seed_xyz_graspable.contiguous(),
+        group_features = self.cy_group(seed_xyz_graspable.contiguous(),
                                    seed_features_graspable.contiguous(),
                                    grasp_top_views_rot)
 
         # Width and score predicting
-        end_points = self.swad(group_features, end_points)
+        end_points = self.grasp_head(group_features, end_points)
 
         return end_points
 
@@ -123,6 +123,7 @@ def pred_decode(end_points):
     for i in range(batch_size):
         grasp_center = end_points['xyz_graspable'][i].float()
 
+        # composite score estimation
         grasp_score_prob = end_points['grasp_score_pred'][i].float()
         score = torch.tensor([0, 0.2, 0.4, 0.6, 0.8, 1]).view(-1, 1).expand(-1, grasp_score_prob.shape[1]).to(grasp_score_prob)
         score = torch.sum(score * grasp_score_prob, dim=0)

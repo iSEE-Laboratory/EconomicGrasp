@@ -72,7 +72,6 @@ def process_grasp_labels(end_points):
             grasp_views_ = grasp_views.transpose(0, 1).contiguous().unsqueeze(0)
             grasp_views_trans_ = grasp_views_trans.transpose(0, 1).contiguous().unsqueeze(0)
             view_inds = knn(grasp_views_trans_, grasp_views_, k=1).squeeze() - 1  # [300]
-            # knn(ref, query, k), compute k nearest neighbors for each query point
             view_graspness_trans = torch.index_select(view_graspness, 1, view_inds)  # [object points, 300]
             grasp_views_rot_trans = torch.index_select(grasp_views_rot_trans, 0, view_inds)
             grasp_views_rot_trans = grasp_views_rot_trans.unsqueeze(0).expand(num_grasp_points, -1, -1, -1)
@@ -108,7 +107,6 @@ def process_grasp_labels(end_points):
         # compute nearest neighbors
         seed_xyz_ = seed_xyz.transpose(0, 1).contiguous().unsqueeze(0)
         grasp_points_merged_ = grasp_points_merged.transpose(0, 1).contiguous().unsqueeze(0)
-        # knn(ref, query, k)
         nn_inds = knn(grasp_points_merged_, seed_xyz_, k=1).squeeze() - 1
 
         # assign anchor points to real points
@@ -151,8 +149,6 @@ def process_grasp_labels(end_points):
         top_grasp_widths[pid] = torch.gather(grasp_widths_merged[pid], 1, vid.view(-1, 1)).squeeze(1)
 
         # only compute loss in the points with correct matching (so compute the mask first)
-        # to be noted that we can only use torch.sum(valid_view_mask) instead of pid.shape[0],
-        # cause that pid has two or more same index.
         dist = compute_pointwise_dists(seed_xyz, grasp_points_merged)
         valid_point_mask = dist < 0.005
         valid_view_mask = torch.zeros(num_samples, dtype=torch.bool).to(seed_xyz.device)

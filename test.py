@@ -9,11 +9,10 @@ from graspnetAPI import GraspGroup, GraspNetEval
 from utils.collision_detector import ModelFreeCollisionDetector
 from utils.arguments import cfgs
 
-
 from dataset.graspnet_dataset import GraspNetDataset, collate_fn
 from models.economicgrasp import economicgrasp, pred_decode
 
-# ------------ GLOBAL CONFIG BEGIN ------------
+# ------------ GLOBAL CONFIG ------------
 if not os.path.exists(cfgs.save_dir): os.mkdir(cfgs.save_dir)
 
 
@@ -26,16 +25,16 @@ def my_worker_init_fn(worker_id):
 # Create dataset and dataloader
 if cfgs.test_mode == 'seen':
     TEST_DATASET = GraspNetDataset(cfgs.dataset_root, split='test_seen',
-                               camera=cfgs.camera, num_points=cfgs.num_point, remove_outlier=True, augment=False,
-                               load_label=False)
+                                   camera=cfgs.camera, num_points=cfgs.num_point, remove_outlier=True, augment=False,
+                                   load_label=False)
 elif cfgs.test_mode == 'similar':
     TEST_DATASET = GraspNetDataset(cfgs.dataset_root, split='test_similar',
-                               camera=cfgs.camera, num_points=cfgs.num_point, remove_outlier=True, augment=False,
-                               load_label=False)
+                                   camera=cfgs.camera, num_points=cfgs.num_point, remove_outlier=True, augment=False,
+                                   load_label=False)
 elif cfgs.test_mode == 'novel':
     TEST_DATASET = GraspNetDataset(cfgs.dataset_root, split='test_novel',
-                               camera=cfgs.camera, num_points=cfgs.num_point, remove_outlier=True, augment=False,
-                               load_label=False)
+                                   camera=cfgs.camera, num_points=cfgs.num_point, remove_outlier=True, augment=False,
+                                   load_label=False)
 
 SCENE_LIST = TEST_DATASET.scene_list()
 TEST_DATALOADER = DataLoader(TEST_DATASET, batch_size=cfgs.batch_size, shuffle=False,
@@ -45,16 +44,15 @@ TEST_DATALOADER = DataLoader(TEST_DATASET, batch_size=cfgs.batch_size, shuffle=F
 net = economicgrasp(seed_feat_dim=512, is_training=False)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 net.to(device)
-# Load checkpoint
 
+# Load checkpoint
 checkpoint = torch.load(cfgs.checkpoint_path)
 net.load_state_dict(checkpoint['model_state_dict'])
 start_epoch = checkpoint['epoch']
 print("-> loaded checkpoint %s (epoch: %d)" % (cfgs.checkpoint_path, start_epoch))
-# ------- GLOBAL CONFIG END ---------
 
 
-# ------Testing BEGIN  ------------
+# ------ Testing ------------
 def inference():
     batch_interval = 20
     stat_dict = {}  # collect statistics
@@ -103,6 +101,7 @@ def inference():
             print('Eval batch: %d, time: %fs' % (batch_idx, (toc - tic) / batch_interval))
             tic = time.time()
 
+
 def evaluate_seen():
     ge = GraspNetEval(root=cfgs.dataset_root, camera=cfgs.camera, split='test')
     # In test time, we will select top-10 grasps for each objects (sorted by our predicted score).
@@ -110,7 +109,8 @@ def evaluate_seen():
     res, ap = ge.eval_seen(cfgs.save_dir, proc=6)
     save_dir = os.path.join(cfgs.save_dir, 'ap_{}_seen.npy'.format(cfgs.camera))
     np.save(save_dir, res)
-    print(f"seen testing, AP 0.8={np.mean(res[:,:,:,3])}, AP 0.4={np.mean(res[:,:,:,1])}")
+    print(f"seen testing, AP 0.8={np.mean(res[:, :, :, 3])}, AP 0.4={np.mean(res[:, :, :, 1])}")
+
 
 def evaluate_similar():
     ge = GraspNetEval(root=cfgs.dataset_root, camera=cfgs.camera, split='test')
@@ -119,7 +119,8 @@ def evaluate_similar():
     res, ap = ge.eval_similar(cfgs.save_dir, proc=6)
     save_dir = os.path.join(cfgs.save_dir, 'ap_{}_similar.npy'.format(cfgs.camera))
     np.save(save_dir, res)
-    print(f"similar testing, AP 0.8={np.mean(res[:,:,:,3])}, AP 0.4={np.mean(res[:,:,:,1])}")
+    print(f"similar testing, AP 0.8={np.mean(res[:, :, :, 3])}, AP 0.4={np.mean(res[:, :, :, 1])}")
+
 
 def evaluate_novel():
     ge = GraspNetEval(root=cfgs.dataset_root, camera=cfgs.camera, split='test')
@@ -128,7 +129,7 @@ def evaluate_novel():
     res, ap = ge.eval_novel(cfgs.save_dir, proc=6)
     save_dir = os.path.join(cfgs.save_dir, 'ap_{}_novel.npy'.format(cfgs.camera))
     np.save(save_dir, res)
-    print(f"novel testing, AP 0.8={np.mean(res[:,:,:,3])}, AP 0.4={np.mean(res[:,:,:,1])}")
+    print(f"novel testing, AP 0.8={np.mean(res[:, :, :, 3])}, AP 0.4={np.mean(res[:, :, :, 1])}")
 
 
 if __name__ == '__main__':
@@ -140,4 +141,3 @@ if __name__ == '__main__':
         evaluate_similar()
     elif cfgs.test_mode == 'novel':
         evaluate_novel()
-

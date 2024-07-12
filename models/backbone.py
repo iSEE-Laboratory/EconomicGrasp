@@ -114,7 +114,7 @@ class ResNetBase(nn.Module):
         return self.final(x)
 
 
-class MinkUNetBase(ResNetBase):
+class TDUnet(ResNetBase):
     BLOCK = BasicBlock
     DILATIONS = (1, 1, 1, 1, 1, 1, 1, 1)
 

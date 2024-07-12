@@ -31,7 +31,7 @@ Install PyTorch.
 ```bash
 conda install openblas-devel -c anaconda
 conda install pytorch=1.9.0 torchvision cudatoolkit=11.1 -c pytorch -c nvidia
-torch.cuda.is_available() # True
+# torch.cuda.is_available() == True, check the right CUDA version
 ```
 
 Install the MinkowskiEngine.
@@ -88,7 +88,7 @@ python generate_graspness.py --dataset_root /home/xiaoming/dataset/graspnet --ca
 
 ### Sparse Dataset Generation
 
-After generate the graspness, we can generate our economic supervision.
+After generating the graspness, we can generate our economic supervision.
 
 ```bash
 cd dataset
@@ -105,7 +105,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py --model economicgrasp --camera kinect --l
 
 ### Testing
 
-For testing, there are seen, similar, novel sets for evaluation.
+For testing, there are seen, similar, novel settings.
 
 ```bash
 # seen
@@ -132,7 +132,9 @@ We also test the training time, memory cost in an empty machine with one RTX 309
 | ----- | ----------- | ---------- |
 | 8.3 h | 4.2 G       | 5.81 G     |
 
-NOTE: we have alreadyprinted the remaining time in our log output and you can see it when you run the code in your machine.
+NOTE1: We have already printed the remaining time in our log output and you can see it when you run the code in your machine.
+
+NOTE2: When you use the model at the first time, it will not be as fast as you think. It takes maybe 60ep to warmup at the first time, and then next time your training will be normal and fast.
 
 ## Citation
 
