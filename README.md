@@ -32,7 +32,8 @@ Install PyTorch.
 
 ```bash
 conda install openblas-devel -c anaconda
-conda install pytorch=1.9.0 torchvision cudatoolkit=11.1 -c pytorch -c nvidia
+conda install pytorch=1.9.0 torchvision cudatoolkit=11.1 -c pytorch -c nvidia 
+# the version of pytorch should suit your cuda
 # torch.cuda.is_available() == True, check the right CUDA version
 ```
 
@@ -141,3 +142,12 @@ NOTE2: When you use the model at the first time, it will not be as fast as you t
 ## Citation
 
 ```
+@misc{wu2024economicframework6dofgrasp,
+      title={An Economic Framework for 6-DoF Grasp Detection}, 
+      author={Xiao-Ming Wu and Jia-Feng Cai and Jian-Jian Jiang and Dian Zheng and Yi-Lin 			Wei and Wei-Shi Zheng},
+      year={2024},
+      eprint={2407.08366},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2407.08366}, 
+}

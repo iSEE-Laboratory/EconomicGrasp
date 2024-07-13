@@ -5,7 +5,7 @@ import MinkowskiEngine as ME
 
 from models.backbone import TDUnet
 from models.modules_economicgrasp import GraspableNet, RotationNet, Cylinder_Grouping_Local_Interaction, Grasp_Head_Globle_Interaction
-from utils.label_generation import process_grasp_labels
+from utils.label_generation import process_grasp_labels, batch_viewpoint_params_to_matrix
 from libs.pointnet2.pointnet2_utils import furthest_point_sample, gather_operation
 from utils.arguments import cfgs
 
