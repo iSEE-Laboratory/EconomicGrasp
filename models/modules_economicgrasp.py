@@ -24,7 +24,7 @@ class GraspableNet(nn.Module):
         return end_points
 
 
-class RotationNet(nn.Module):
+class ViewNet(nn.Module):
     def __init__(self, num_view, seed_feature_dim, is_training=True):
         super().__init__()
         self.num_view = num_view

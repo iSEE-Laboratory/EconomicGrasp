@@ -112,11 +112,11 @@ For testing, there are seen, similar, novel settings.
 
 ```bash
 # seen
-CUDA_VISIBLE_DEVICES=0 python test.py --model economicgrasp --save_dir results/economicgrasp/test_ep10_seen --checkpoint_path results/economicgrasp/economicgrasp_epoch10.tar --camera kinect --dataset_root /home/xiaoming/dataset/graspnet --test_mode seen --inference --m_point 2048
+CUDA_VISIBLE_DEVICES=0 python test.py --model economicgrasp --save_dir results/economicgrasp/test_ep10_seen --checkpoint_path results/economicgrasp/economicgrasp_epoch10.tar --camera kinect --dataset_root /home/xiaoming/dataset/graspnet --test_mode seen --inference
 # similar
-CUDA_VISIBLE_DEVICES=1 python test.py --model economicgrasp --save_dir results/economicgrasp/test_ep10_similar --checkpoint_path results/economicgrasp/economicgrasp_epoch10.tar --camera kinect --dataset_root /home/xiaoming/dataset/graspnet --test_mode similar --inference --m_point 2048
+CUDA_VISIBLE_DEVICES=1 python test.py --model economicgrasp --save_dir results/economicgrasp/test_ep10_similar --checkpoint_path results/economicgrasp/economicgrasp_epoch10.tar --camera kinect --dataset_root /home/xiaoming/dataset/graspnet --test_mode similar --inference
 # novel
-CUDA_VISIBLE_DEVICES=2 python test.py --model economicgrasp --save_dir results/economicgrasp/test_ep10_novel --checkpoint_path results/economicgrasp/economicgrasp_epoch10.tar --camera kinect --dataset_root /home/xiaoming/dataset/graspnet --test_mode novel --inference --m_point 2048
+CUDA_VISIBLE_DEVICES=2 python test.py --model economicgrasp --save_dir results/economicgrasp/test_ep10_novel --checkpoint_path results/economicgrasp/economicgrasp_epoch10.tar --camera kinect --dataset_root /home/xiaoming/dataset/graspnet --test_mode novel --inference
 
 ```
 

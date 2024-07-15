@@ -4,7 +4,7 @@ import torch.nn as nn
 import MinkowskiEngine as ME
 
 from models.backbone import TDUnet
-from models.modules_economicgrasp import GraspableNet, RotationNet, Cylinder_Grouping_Local_Interaction, Grasp_Head_Globle_Interaction
+from models.modules_economicgrasp import GraspableNet, ViewNet, Cylinder_Grouping_Local_Interaction, Grasp_Head_Globle_Interaction
 from utils.label_generation import process_grasp_labels, batch_viewpoint_params_to_matrix
 from libs.pointnet2.pointnet2_utils import furthest_point_sample, gather_operation
 from utils.arguments import cfgs
@@ -28,10 +28,11 @@ class economicgrasp(nn.Module):
         self.graspable = GraspableNet(seed_feature_dim=self.seed_feature_dim)
 
         # View Selection
-        self.rotation = RotationNet(self.num_view, seed_feature_dim=self.seed_feature_dim, is_training=self.is_training)
+        self.view = ViewNet(self.num_view, seed_feature_dim=self.seed_feature_dim, is_training=self.is_training)
 
         # Cylinder Grouping
-        self.cy_group = Cylinder_Grouping_Local_Interaction(nsample=16, cylinder_radius=cylinder_radius, seed_feature_dim=self.seed_feature_dim)
+        self.cy_group = Cylinder_Grouping_Local_Interaction(nsample=16, cylinder_radius=cylinder_radius,
+                                                            seed_feature_dim=self.seed_feature_dim)
 
         # Depth and Score searching
         self.grasp_head = Grasp_Head_Globle_Interaction(num_angle=self.num_angle, num_depth=self.num_depth)
@@ -56,12 +57,14 @@ class economicgrasp(nn.Module):
 
         # Minkowski Backbone
         seed_features = self.backbone(mink_input).F
-        seed_features = seed_features[end_points['quantize2original']].view(B, point_num, -1).transpose(1, 2)  # [B (batch size), 512 (feature dim), 20000 (points in a scene)]
+        seed_features = seed_features[end_points['quantize2original']].view(B, point_num, -1).transpose(1, 2)
+        # [B (batch size), 512 (feature dim), 20000 (points in a scene)]
 
         # Generate the masks of the objectness and the graspness
         end_points = self.graspable(seed_features, end_points)
         seed_features_flipped = seed_features.transpose(1, 2)
-        objectness_score = end_points['objectness_score']  # [B (batch size), 2 (object classification), 20000 (points in a scene)]
+        objectness_score = end_points['objectness_score']
+        # [B (batch size), 2 (object classification), 20000 (points in a scene)]
         graspness_score = end_points['graspness_score'].squeeze(1)  # [B (batch size), 20000 (points in a scene)]
         objectness_pred = torch.argmax(objectness_score, 1)
         objectness_mask = (objectness_pred == 1)
@@ -87,20 +90,24 @@ class economicgrasp(nn.Module):
 
             seed_features_graspable.append(cur_feat)
             seed_xyz_graspable.append(cur_seed_xyz)
-        seed_xyz_graspable = torch.stack(seed_xyz_graspable, 0)  # [B (batch size), 512 (feature dim), 1024 (points after sample)]
+        seed_xyz_graspable = torch.stack(seed_xyz_graspable, 0)
+        # [B (batch size), 512 (feature dim), 1024 (points after sample)]
         seed_features_graspable = torch.stack(seed_features_graspable)
         end_points['xyz_graspable'] = seed_xyz_graspable
         end_points['D: Graspable Points'] = graspable_num_batch / B
 
         # Select the view for each point
-        end_points, res_feat = self.rotation(seed_features_graspable, end_points)  # [B (batch size), 512 (feature dim), 1024 (points after sample)]
-        seed_features_graspable = seed_features_graspable + res_feat  # [B (batch size), 512 (feature dim), 1024 (points after sample)]
+        end_points, res_feat = self.view(seed_features_graspable, end_points)
+        # [B (batch size), 512 (feature dim), 1024 (points after sample)]
+        seed_features_graspable = seed_features_graspable + res_feat
+        # [B (batch size), 512 (feature dim), 1024 (points after sample)]
 
         # Generate the labels
         if self.is_training:
             # generate the scene-level grasp labels from the object-level grasp label and the object poses
             # map the scene sampled points to the labeled object points
-            # (note that the labeled object points and the sampled points may not 100% match due to the sampling and argumentation)
+            # (note that the labeled object points and the sampled points
+            # may not 100% match due to the sampling and argumentation)
             grasp_top_views_rot, end_points = process_grasp_labels(end_points)
         else:
             grasp_top_views_rot = end_points['grasp_top_view_rot']

@@ -13,7 +13,8 @@ from dataset.graspnet_dataset import GraspNetDataset, collate_fn
 from models.economicgrasp import economicgrasp, pred_decode
 
 # ------------ GLOBAL CONFIG ------------
-if not os.path.exists(cfgs.save_dir): os.mkdir(cfgs.save_dir)
+if not os.path.exists(cfgs.save_dir):
+    os.mkdir(cfgs.save_dir)
 
 
 # Init datasets and dataloaders
