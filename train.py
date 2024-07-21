@@ -51,7 +51,7 @@ TRAIN_DATASET = GraspNetDataset(cfgs.dataset_root, camera=cfgs.camera, split='tr
 TRAIN_DATALOADER = DataLoader(TRAIN_DATASET, batch_size=cfgs.batch_size, shuffle=True,
                               num_workers=2, worker_init_fn=my_worker_init_fn, collate_fn=collate_fn)
 
-# Init the model and optimzier
+# Init the model
 net = economicgrasp(seed_feat_dim=512, is_training=True)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -83,10 +83,6 @@ def adjust_learning_rate(optimizer, epoch):
         param_group['lr'] = lr
 
 
-def count_parameters(model):
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
-
-
 # ------TRAINING BEGIN  ------------
 def train_one_epoch():
     stat_dict = {}  # collect statistics
@@ -102,9 +98,6 @@ def train_one_epoch():
                 for i in range(len(batch_data_label[key])):
                     for j in range(len(batch_data_label[key][i])):
                         batch_data_label[key][i][j] = batch_data_label[key][i][j].to(device)
-            elif 'graph' in key:
-                for i in range(len(batch_data_label[key])):
-                    batch_data_label[key][i] = batch_data_label[key][i].to(device)
             else:
                 batch_data_label[key] = batch_data_label[key].to(device)
         data_end_time = time.time()
