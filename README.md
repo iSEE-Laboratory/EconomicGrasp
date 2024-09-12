@@ -106,6 +106,8 @@ CUDA_VISIBLE_DEVICES=0 python train.py --model economicgrasp --camera kinect --l
 
 ### Testing
 
+[[EconomicGrasp-kinect]](https://github.com/iSEE-Laboratory/EconomicGrasp/releases/download/v0.1/economicgrasp_epoch10.tar)
+
 For testing, there are seen, similar, novel settings.
 
 ```bash
