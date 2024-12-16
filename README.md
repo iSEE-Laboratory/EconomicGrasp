@@ -144,12 +144,11 @@ NOTE2: When you use the model at the first time, it will not be as fast as you t
 ## Citation
 
 ```
-@misc{wu2024economicframework6dofgrasp,
-      title={An Economic Framework for 6-DoF Grasp Detection}, 
-      author={Xiao-Ming Wu and Jia-Feng Cai and Jian-Jian Jiang and Dian Zheng and Yi-Lin 			Wei and Wei-Shi Zheng},
-      year={2024},
-      eprint={2407.08366},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO},
-      url={https://arxiv.org/abs/2407.08366}, 
+@inproceedings{wu2025economic,
+  title={An economic framework for 6-dof grasp detection},
+  author={Wu, Xiao-Ming and Cai, Jia-Feng and Jiang, Jian-Jian and Zheng, Dian and Wei, Yi-Lin and Zheng, Wei-Shi},
+  booktitle={European Conference on Computer Vision},
+  pages={357--375},
+  year={2025},
+  organization={Springer}
 }
