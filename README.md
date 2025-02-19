@@ -39,7 +39,7 @@ Install the MinkowskiEngine.
 git clone https://github.com/NVIDIA/MinkowskiEngine.git
 ```
 
-Change the Minkowski Engine based on Cuda12-MinkowskiEngine to support CUDA 12+.
+Change the Minkowski Engine based on step 5 in [Minkowski-CUDA12](https://github.com/Julie-tang00/Common-envs-issues/blob/main/Cuda12-MinkowskiEngine) to support CUDA 12+.
 
 ```bash
 cd MinkowskiEngine
@@ -76,7 +76,7 @@ python setup.py install
 
 #### GraspNetAPI 
 
-Install graspnetAPI for evaluation. (if you download the graspnetAPI, change the numpy version to 1.23.4)
+Install graspnetAPI for evaluation. (if you download the previous version of graspnetAPI, change the numpy version to 1.23.4 or redownload it)
 
 ```bash
 git clone https://github.com/graspnet/graspnetAPI.git

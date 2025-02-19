@@ -2,3 +2,5 @@
 /libs/graspnetAPI
 .idea/workspace.xml
 /.idea
+/results
+__pycache__
