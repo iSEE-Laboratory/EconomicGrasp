@@ -22,7 +22,7 @@ If you have any questions, feel free to contact me by wuxm65@mail2.sysu.edu.cn.
 
 ### Dependencies Installation
 
-Please follow the instructions to ensure successful installation. We also write a [file](common_issues.md) to describe some common issues of the installation.
+Please follow the instructions to ensure successful installation, which supports the Python 3.10 and CUDA 12+ environment.
 
 #### PyTorch & MinkowskiEngine
 
@@ -30,16 +30,21 @@ Install PyTorch.
 
 ```bash
 conda install openblas-devel -c anaconda
-conda install pytorch=1.9.0 torchvision cudatoolkit=11.1 -c pytorch -c nvidia 
-# the version of pytorch should suit your cuda
-# torch.cuda.is_available() == True, check the right CUDA version
+conda install pytorch==2.5.1 torchvision==0.20.1 pytorch-cuda=12.1 -c pytorch -c nvidia
 ```
 
 Install the MinkowskiEngine.
 
-```
+```bash
 git clone https://github.com/NVIDIA/MinkowskiEngine.git
+```
+
+Change the Minkowski Engine based on Cuda12-MinkowskiEngine to support CUDA 12+.
+
+```bash
 cd MinkowskiEngine
+pip install --upgrade setuptools==59.8.0
+conda install ninja
 python setup.py install --blas_include_dirs=${CONDA_PREFIX}/include --blas=openblas
 ```
 
@@ -71,7 +76,7 @@ python setup.py install
 
 #### GraspNetAPI 
 
-Install graspnetAPI for evaluation.
+Install graspnetAPI for evaluation. (if you download the graspnetAPI, change the numpy version to 1.23.4)
 
 ```bash
 git clone https://github.com/graspnet/graspnetAPI.git
@@ -81,7 +86,8 @@ pip install .
 
 ### Graspness Generation
 
-Generate graspness. Make sure you have downloaded the orginal dataset from [GraspNet](https://graspnet.net/). 
+Generate graspness. Make sure you have downloaded the orginal dataset from [GraspNet](https://graspnet.net/).
+
 ```bash
 cd dataset
 python generate_graspness.py --dataset_root /home/xiaoming/dataset/graspnet --camera_type kinect
@@ -106,9 +112,9 @@ CUDA_VISIBLE_DEVICES=0 python train.py --model economicgrasp --camera kinect --l
 
 ### Testing
 
-[EconomicGrasp-kinect](https://github.com/iSEE-Laboratory/EconomicGrasp/releases/download/v0.1/economicgrasp_kinect.tar)
+[EconomicGrasp-kinect](https://github.com/iSEE-Laboratory/EconomicGrasp/releases/download/v1/economicgrasp_kinect.tar)
 
-[EconomicGrasp-realsense](https://github.com/iSEE-Laboratory/EconomicGrasp/releases/download/v0.1/economicgrasp_realsense.tar)
+[EconomicGrasp-realsense](https://github.com/iSEE-Laboratory/EconomicGrasp/releases/download/v1/economicgrasp_realsense.tar)
 
 For testing, there are seen, similar, novel settings.
 
