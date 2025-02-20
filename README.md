@@ -39,7 +39,7 @@ Install the MinkowskiEngine.
 git clone https://github.com/NVIDIA/MinkowskiEngine.git
 ```
 
-Change the Minkowski Engine based on step 5 in [Minkowski-CUDA12](https://github.com/Julie-tang00/Common-envs-issues/blob/main/Cuda12-MinkowskiEngine) to support CUDA 12+.
+Change the Minkowski Engine code based on step5 in [Minkowski-CUDA12](https://github.com/Julie-tang00/Common-envs-issues/blob/main/Cuda12-MinkowskiEngine) to support CUDA 12+. And then run the following code to install.
 
 ```bash
 cd MinkowskiEngine
