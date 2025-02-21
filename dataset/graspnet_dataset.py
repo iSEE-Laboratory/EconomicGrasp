@@ -262,7 +262,7 @@ class GraspNetDataset(Dataset):
         ret_dict['view_graspness_list'] = view_graspness_list
         # list has a length of objects amount, each has size [object_points, 300 (view graspness)]
         ret_dict['top_view_index_list'] = top_view_index_list
-        # list has a length of objects amount, each has size [object_points, 60 (top 60 views index)]
+        # list has a length of objects amount, each has size [object_points, top views index]
 
         return ret_dict
 
@@ -276,15 +276,3 @@ def collate_fn(batch):
         return [[torch.from_numpy(sample) for sample in b] for b in batch]
 
     raise TypeError("batch must contain tensors, dicts or lists; found {}".format(type(batch[0])))
-
-
-if __name__ == "__main__":
-    dir = '/home/xiaoming/dataset/graspnet/grasp_label_simplified/scene_0000_labels.npz'
-    label = np.load(dir)
-    print(label.files)
-    print(label['points'].shape)  # [num_points, 3]
-    print(label['scores'].shape)  # [num_points, 60, 12, 4]
-    print(label['widths'].shape)  # [num_points, 60, 12, 4]
-    print(label['Top60view'].shape)  # [num_points, 60]
-    print(label['vgraspness'].shape)  # [num_points, 300]
-    print(label['pointid'].shape)  # [num_points, ]
