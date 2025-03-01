@@ -4,7 +4,7 @@ import torch.nn as nn
 import MinkowskiEngine as ME
 
 from models.backbone import TDUnet
-from models.modules_economicgrasp import GraspableNet, ViewNet, Cylinder_Grouping_Local_Interaction, Grasp_Head_Globle_Interaction
+from models.modules_economicgrasp import GraspableNet, ViewNet, Cylinder_Grouping_Global_Interaction, Grasp_Head_Local_Interaction
 from utils.label_generation import process_grasp_labels, batch_viewpoint_params_to_matrix
 from libs.pointnet2.pointnet2_utils import furthest_point_sample, gather_operation
 from utils.arguments import cfgs
@@ -31,11 +31,11 @@ class economicgrasp(nn.Module):
         self.view = ViewNet(self.num_view, seed_feature_dim=self.seed_feature_dim, is_training=self.is_training)
 
         # Cylinder Grouping
-        self.cy_group = Cylinder_Grouping_Local_Interaction(nsample=16, cylinder_radius=cylinder_radius,
+        self.cy_group = Cylinder_Grouping_Global_Interaction(nsample=16, cylinder_radius=cylinder_radius,
                                                             seed_feature_dim=self.seed_feature_dim)
 
         # Depth and Score searching
-        self.grasp_head = Grasp_Head_Globle_Interaction(num_angle=self.num_angle, num_depth=self.num_depth)
+        self.grasp_head = Grasp_Head_Local_Interaction(num_angle=self.num_angle, num_depth=self.num_depth)
 
     def forward(self, end_points):
         seed_xyz = end_points['point_clouds']  # use all sampled point cloud, [B, point_num (15000)， 3]

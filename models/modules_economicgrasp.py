@@ -71,7 +71,7 @@ class ViewNet(nn.Module):
         return end_points, res_features
 
 
-class Cylinder_Grouping_Local_Interaction(nn.Module):
+class Cylinder_Grouping_Global_Interaction(nn.Module):
     def __init__(self, nsample, seed_feature_dim, cylinder_radius=0.05, hmin=-0.02, hmax=0.04):
         super().__init__()
         self.nsample = nsample
@@ -99,7 +99,7 @@ class Cylinder_Grouping_Local_Interaction(nn.Module):
         return new_features
 
 
-class Grasp_Head_Globle_Interaction(nn.Module):
+class Grasp_Head_Local_Interaction(nn.Module):
     def __init__(self, num_angle, num_depth):
         super().__init__()
         self.num_angle = num_angle
