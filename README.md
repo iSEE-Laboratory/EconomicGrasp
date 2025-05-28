@@ -145,7 +145,7 @@ We also test the training time, memory cost in an empty machine with one RTX 309
 
 NOTE1: We have already printed the remaining time in our log output and you can see it when you run the code in your machine.
 
-NOTE2: When you use the model at the first time, it will not be as fast as you think. It takes maybe 60ep to warmup at the first time, and then next time your training will be normal and fast.
+NOTE2: When you use the model at the first time, it will not be as fast as you think. It takes maybe 60 batches to warmup at the first time, and then next time your training will be normal and fast.
 
 ## Citation
 
