@@ -137,11 +137,11 @@ def pred_decode(end_points):
         grasp_score = score.view(-1, 1)
 
         grasp_angle_pred = end_points['grasp_angle_pred'][i].float()
-        grasp_angle, grasp_angle_indxs = torch.max(grasp_angle_pred.squeeze(0), 0)
+        grasp_angle, grasp_angle_indxs = torch.max(grasp_angle_pred.squeeze(0)[:cfgs.num_angle], 0)
         grasp_angle = grasp_angle_indxs * np.pi / 12
 
         grasp_depth_pred = end_points['grasp_depth_pred'][i].float()
-        grasp_depth, grasp_depth_indxs = torch.max(grasp_depth_pred.squeeze(0), 0)
+        grasp_depth, grasp_depth_indxs = torch.max(grasp_depth_pred.squeeze(0)[:cfgs.num_depth], 0)
         grasp_depth = (grasp_depth_indxs + 1) * 0.01
         grasp_depth = grasp_depth.view(-1, 1)
 
